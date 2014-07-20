@@ -5,36 +5,44 @@ var spriteL : Sprite;
 var spriteR : Sprite;
 var spriteD : Sprite;
 var spriteC : Sprite;
+var spriteRR : Sprite;
+var spriteRL : Sprite;
 
-function SetSprite (roll: int, pitch: int, depth: int) {
+function SetSprite (state: State, depth: Depth) {
 
 	var renderer : SpriteRenderer = gameObject.GetComponent(SpriteRenderer);
 
-	if(roll == 1 && pitch == 1){
+	if(state == State.Cruising){
 		renderer.sprite = spriteT;
 	}
-	else if(roll == 0 && pitch == 1){
+	else if(state == State.BankingL){
 		renderer.sprite = spriteL;
 	}
-	else if(roll == 2 && pitch == 1){
+	else if(state == State.BankingR){
 		renderer.sprite = spriteR;
 	}
-	else if(roll == 1 && pitch == 0){
+	else if(state == State.Diving){
 		renderer.sprite = spriteD;
 	}	
-	else if(roll == 1 && pitch == 2){
+	else if(state == State.Climbing){
 		renderer.sprite = spriteC;
 	}	
+	else if(state == State.RollingR){
+		renderer.sprite = spriteRR;
+	}
+	else if(state == State.RollingL){
+		renderer.sprite = spriteRL;
+	}		
 	
 	switch(depth){
 	
-		case 0:
+		case Depth.Bottom:
 			transform.localScale = Vector3(0.6,0.6,1);
 			break;
-		case 1:
+		case Depth.Middle:
 			transform.localScale = Vector3(0.8,0.8,1);
 			break;
-		case 2:
+		case Depth.Top:
 			transform.localScale = Vector3(1,1,1);
 			break;
 	}
