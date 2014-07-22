@@ -46,18 +46,18 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\JunkerSprite.js" />
      <Compile Include="Assets\scripts\BoltClass.js" />
      <Compile Include="Assets\scripts\DriveClass.js" />
      <Compile Include="Assets\scripts\JunkerClassController.js" />
      <Compile Include="Assets\scripts\JunkerShipController.js" />
+     <Compile Include="Assets\scripts\JunkerSprite.js" />
+     <Compile Include="Assets\scripts\JunkerTurret.js" />
      <Compile Include="Assets\scripts\SalvoClass.js" />
      <Compile Include="Assets\scripts\ShieldScript.js" />
      <Compile Include="Assets\scripts\TrailManager.js" />
      <Compile Include="Assets\scripts\TrailPool.js" />
      <Compile Include="Assets\scripts\TrailPrefab.js" />
      <Compile Include="Assets\scripts\TronTrail.js" />
-     <Compile Include="Assets\scripts\TurretManager.js" />
      <Compile Include="Assets\scripts\background.js" />
      <Compile Include="Assets\scripts\text.js" />
   </ItemGroup>

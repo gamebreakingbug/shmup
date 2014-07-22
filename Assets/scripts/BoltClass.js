@@ -17,7 +17,7 @@ public class BoltClass extends MonoBehaviour {
 
 	}
 
-	function Launch (direction : float) {
+	function Launch (direction : float, depth : Depth) {
 
 		var directionHashtable : Hashtable = new Hashtable();
 		var spriteArray = new Sprite[4];
@@ -39,6 +39,22 @@ public class BoltClass extends MonoBehaviour {
 		var directionTranslation : Array = directionHashtable[direction];
 		velX = directionTranslation[0];
 		velY = directionTranslation[1];
+		
+		// resize
+		
+		switch(depth){
+		
+			case Depth.Bottom:
+				transform.localScale = Vector3(0.6,0.6,1);
+				break;
+			case Depth.Middle:
+				transform.localScale = Vector3(0.8,0.8,1);
+				break;
+			case Depth.Top:
+				transform.localScale = Vector3(1,1,1);
+				break;
+		}
+		
 		// render appropriate spite
 		
 		var renderer : SpriteRenderer = gameObject.GetComponent(SpriteRenderer);
@@ -47,6 +63,7 @@ public class BoltClass extends MonoBehaviour {
 		yield WaitForSeconds(0.02);
 		launched = true;
 		renderer.sprite = boltSprite;
+	
 		
 	}
 

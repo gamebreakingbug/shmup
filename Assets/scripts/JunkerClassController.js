@@ -7,6 +7,7 @@ public class JunkerClassController extends MonoBehaviour {
 	
 	var speed : float = 1f;
 	var rollSpeed : float = 1f;
+	var pitchSpeed : float = 1f;
 	var delay : float = 1f;
 	
 	var window : GameObject;
@@ -16,6 +17,7 @@ public class JunkerClassController extends MonoBehaviour {
 	private var screenBounds : Vector3;
 	private var screenOffset : Vector3;
 	private var pitching : boolean;
+	private var pitchReset : boolean;
 
 	function Start () {
 	
@@ -28,9 +30,19 @@ public class JunkerClassController extends MonoBehaviour {
 	
 	}
 	
-	function ShiftPitch (direction : State){
+	function GetState(){
+		return state;
+	}
 	
+	function GetDepth(){
+		return depth;
+	}
+	
+	function ShiftPitch (direction : State){
+		
+		pitchReset = false;
 		pitching = true;
+		gameObject.GetComponentInChildren(JunkerSprite).pitching = true;
 	
 		switch (direction){
 			
@@ -48,6 +60,8 @@ public class JunkerClassController extends MonoBehaviour {
 		
 		yield WaitForSeconds(delay);
 		pitching = false;
+		gameObject.GetComponentInChildren(JunkerSprite).pitching = false;
+
 	}
 
 	function Update () {
@@ -61,7 +75,7 @@ public class JunkerClassController extends MonoBehaviour {
 		
 		// text window //
 		
-		window.GetComponent(GUIText).text = "thrust = " + thrust + "\n" + "bank = " + bank + "\n" + "pitch = " + pitch + "\n" + "STATE = " + state + "\n" + "DEPTH = " + depth ;
+		window.GetComponent(GUIText).text = "thrust = " + thrust + "\n" + "bank = " + bank + "\n" + "pitch = " + pitch + "\n" + "STATE = " + state + "\n" + "DEPTH = " + depth;
 		
 		// Junker Movement //
 		
@@ -72,10 +86,7 @@ public class JunkerClassController extends MonoBehaviour {
 			rigidbody2D.AddForce(Vector2.up * (speed * thrust));
 		}
 		
-		if (roll == 1f || roll == -1f){
-			rigidbody2D.AddForce(Vector2.right * (speed * (roll * rollSpeed)));
-		}
-		else if (bank >= 0.75f || bank <= -0.75f){
+		if (bank >= 0.75f || bank <= -0.75f){
 			rigidbody2D.AddForce(Vector2.right * (speed * bank));
 		}
 		else if (bank == 0){
@@ -107,27 +118,27 @@ public class JunkerClassController extends MonoBehaviour {
 		
 		// Check State //
 		
-		if (pitch == 1 && depth != Depth.Bottom && !pitching){
+		// checks vertical2 returned to centre before allowing subsequent pitch
+		if (pitch == 0){
+			pitchReset = true;
+		}
+		if (pitch == 1 && depth != Depth.Bottom && !pitching && pitchReset){
 			state = State.Diving;
+			rigidbody2D.AddForce(Vector2.up * (speed * (pitch * pitchSpeed)));
 			ShiftPitch(state);
 		}
-		else if (pitch == -1 && depth != Depth.Top && !pitching){
+		else if (pitch == -1 && depth != Depth.Top && !pitching && pitchReset){
 			state = State.Climbing;
+			rigidbody2D.AddForce(Vector2.up * (speed * (pitch * pitchSpeed)));
 			ShiftPitch(state);
 		}
-		else if (roll == 1){
-			state = State.RollingR;
-		}
-		else if (roll == -1){
-			state = State.RollingL;
-		}
-		else if (bank >= 0.75f){
+		else if (bank >= 0.75f && !pitching){
 			state = State.BankingR;
 			}
-		else if (bank <= -0.75f){
+		else if (bank <= -0.75f && !pitching){
 			state = State.BankingL;
 			}
-		else { 
+		else{ 
 			state = State.Cruising;
 		}
 		

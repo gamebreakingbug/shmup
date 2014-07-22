@@ -1,10 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/JunkerClassController.js">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/JunkerTurret.js">
     <Files>
-      <File FileName="Assets/scripts/JunkerClassController.js" Line="40" Column="25" />
-      <File FileName="Assets/scripts/JunkerClassController.js" Line="148" Column="2" />
-      <File FileName="Assets/JunkerSprite.js" Line="30" Column="2" />
+      <File FileName="Assets/scripts/JunkerClassController.js" Line="38" Column="16" />
+      <File FileName="Assets/scripts/JunkerTurret.js" Line="116" Column="54" />
+      <File FileName="Assets/scripts/BoltClass.js" Line="54" Column="25" />
+      <File FileName="Assets/scripts/JunkerSprite.js" Line="19" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
