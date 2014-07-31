@@ -46,12 +46,14 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\ControllerClass.js" />
      <Compile Include="Assets\scripts\BoltClass.js" />
      <Compile Include="Assets\scripts\DriveClass.js" />
      <Compile Include="Assets\scripts\JunkerClassController.js" />
      <Compile Include="Assets\scripts\JunkerShipController.js" />
      <Compile Include="Assets\scripts\JunkerSprite.js" />
      <Compile Include="Assets\scripts\JunkerTurret.js" />
+     <Compile Include="Assets\scripts\Moveables.js" />
      <Compile Include="Assets\scripts\SalvoClass.js" />
      <Compile Include="Assets\scripts\ShieldScript.js" />
      <Compile Include="Assets\scripts\TrailManager.js" />

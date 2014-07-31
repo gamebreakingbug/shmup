@@ -1,0 +1,43 @@
+public class Moveables extends MonoBehaviour {
+
+  var speed : float;
+  var velocity : Vector2;
+
+  var bank : float;
+  var thrust : float;
+
+  enum Edge{Horiz, Vert};
+
+  function SetVelocity(x:float,y:float){
+
+    velocity.x = x;
+    velocity.y = y;
+
+  }
+
+function CheckInput(){
+
+    thrust = Input.GetAxis("Vertical");
+    bank = Input.GetAxis("Horizontal");
+
+    if(!bounce){
+      if (thrust == 0){
+        SetVelocity(velocity.x , velocity.y * 0.95f);
+      }
+      else if (thrust >= 0.4f || thrust <= -0.4f){
+        SetVelocity(velocity.x , speed * thrust);
+      }
+
+      if (bank >= 0.4f || bank <= -0.4f){
+        SetVelocity(speed * bank, velocity.y);
+      }
+      else if (bank == 0){
+        SetVelocity(velocity.x * 0.95f, velocity.y);
+      }
+    }
+
+    rigidbody2D.MovePosition(rigidbody2D.position + velocity * Time.deltaTime );
+
+}
+
+}

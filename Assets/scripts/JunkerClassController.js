@@ -1,10 +1,21 @@
 ﻿#pragma strict
-
-	enum State{Cruising, Climbing, Diving, BankingL, BankingR, RollingL, RollingR};
-	enum Depth{Bottom, Middle, Top};
 	
 public class JunkerClassController extends MonoBehaviour {
 	
+	var bCr : Sprite;
+	var bCl : Sprite;
+	var bBl : Sprite;
+	var bBr : Sprite;
+	var mCr : Sprite;
+	var mCl : Sprite;
+	var mDv : Sprite;
+	var mBl : Sprite;
+	var mBr : Sprite;
+	var tCr : Sprite;
+	var tDv : Sprite;
+	var tBl : Sprite;
+	var tBr : Sprite;
+		
 	var speed : float = 1f;
 	var rollSpeed : float = 1f;
 	var pitchSpeed : float = 1f;
@@ -13,17 +24,50 @@ public class JunkerClassController extends MonoBehaviour {
 	var window : GameObject;
 	var depth : Depth;
 	var state : State;
-
+	
+	private var colorTop : Color = new Color(1,1,1,1);
+	private var colorMiddle : Color = new Color(0.8,0.8,0.8,1);
+	private var colorBottom : Color = new Color(0.6,0.6,0.6,1);
+	
+	private var topHashtable : Hashtable = new Hashtable();
+	private var middleHashtable : Hashtable = new Hashtable();
+	private var bottomHashtable : Hashtable = new Hashtable();
+	private var spriteHashtable : Hashtable = new Hashtable();
+	private var colorHashtable : Hashtable = new Hashtable();
+	
 	private var screenBounds : Vector3;
 	private var screenOffset : Vector3;
 	private var pitching : boolean;
-	private var pitchReset : boolean;
 
 	function Start () {
 	
 		screenBounds = Vector3(Screen.width,Screen.height,0);
 		screenOffset.x = (screenBounds.x*6)/100; // 6% of Screen width
 		screenOffset.y = (screenBounds.y*12)/100; // 6% of Screen height
+		
+		// populate sprite hashtables
+		
+		topHashtable[State.Cruising] = tCr;
+		topHashtable[State.Diving] = tDv;
+		topHashtable[State.BankingL] = tBl;
+		topHashtable[State.BankingR] = tBr;
+		middleHashtable[State.Cruising] = mCr;
+		middleHashtable[State.Climbing] = mCl;
+		middleHashtable[State.Diving] = mDv;
+		middleHashtable[State.BankingL] = mBl;
+		middleHashtable[State.BankingR] = mBr;
+		bottomHashtable[State.Cruising] = bCr;
+		bottomHashtable[State.Climbing] = bCl;
+		bottomHashtable[State.BankingL] = bBl;
+		bottomHashtable[State.BankingR] = bBr;
+		
+		spriteHashtable[Depth.Top] = topHashtable;
+		spriteHashtable[Depth.Middle] = middleHashtable;
+		spriteHashtable[Depth.Bottom] = bottomHashtable;
+		
+		colorHashtable[Depth.Top] = colorTop;
+		colorHashtable[Depth.Middle] = colorMiddle;
+		colorHashtable[Depth.Bottom] = colorBottom;
 		
 		depth = Depth.Middle;
 		state = state.Cruising;
@@ -38,11 +82,19 @@ public class JunkerClassController extends MonoBehaviour {
 		return depth;
 	}
 	
+	function SpriteRend(){
+		var sprTable : Hashtable = spriteHashtable[depth];
+		var currentSpr : Sprite = sprTable[state];
+		var currentCol : Color = colorHashtable[depth];
+		var renderer : SpriteRenderer = gameObject.GetComponent(SpriteRenderer);
+		
+		renderer.sprite = currentSpr;
+		renderer.color = currentCol;
+	}
+	
 	function ShiftPitch (direction : State){
 		
-		pitchReset = false;
 		pitching = true;
-		gameObject.GetComponentInChildren(JunkerSprite).pitching = true;
 	
 		switch (direction){
 			
@@ -60,7 +112,6 @@ public class JunkerClassController extends MonoBehaviour {
 		
 		yield WaitForSeconds(delay);
 		pitching = false;
-		gameObject.GetComponentInChildren(JunkerSprite).pitching = false;
 
 	}
 
@@ -116,34 +167,35 @@ public class JunkerClassController extends MonoBehaviour {
 			rigidbody2D.velocity.y *= -0.5;
 			}
 		
-		// Check State //
+		// Check State and render appropriate sprite//
 		
-		// checks vertical2 returned to centre before allowing subsequent pitch
-		if (pitch == 0){
-			pitchReset = true;
-		}
-		if (pitch == 1 && depth != Depth.Bottom && !pitching && pitchReset){
-			state = State.Diving;
-			rigidbody2D.AddForce(Vector2.up * (speed * (pitch * pitchSpeed)));
-			ShiftPitch(state);
-		}
-		else if (pitch == -1 && depth != Depth.Top && !pitching && pitchReset){
-			state = State.Climbing;
-			rigidbody2D.AddForce(Vector2.up * (speed * (pitch * pitchSpeed)));
-			ShiftPitch(state);
-		}
-		else if (bank >= 0.75f && !pitching){
-			state = State.BankingR;
+		if(!pitching){
+			
+			if (pitch == 1 && depth != Depth.Bottom){
+				state = State.Diving;
+				rigidbody2D.AddForce(Vector2.up * (speed * (pitch * pitchSpeed)));
+				SpriteRend();
+				ShiftPitch(state);
 			}
-		else if (bank <= -0.75f && !pitching){
-			state = State.BankingL;
+			else if (pitch == -1 && depth != Depth.Top){
+				state = State.Climbing;
+				rigidbody2D.AddForce(Vector2.up * (speed * (pitch * pitchSpeed)));
+				SpriteRend();
+				ShiftPitch(state);
 			}
-		else{ 
-			state = State.Cruising;
+			else if (bank >= 0.75f){
+				state = State.BankingR;
+				SpriteRend();
+				}
+			else if (bank <= -0.75f){
+				state = State.BankingL;
+				SpriteRend();
+				}
+			else{ 
+				state = State.Cruising;
+				SpriteRend();
+			}
 		}
-		
-		gameObject.GetComponentInChildren(JunkerSprite).SetSprite(state, depth);
-		
 	}			
 
 	

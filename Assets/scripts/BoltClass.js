@@ -45,10 +45,10 @@ public class BoltClass extends MonoBehaviour {
 		switch(depth){
 		
 			case Depth.Bottom:
-				transform.localScale = Vector3(0.6,0.6,1);
+				transform.localScale = Vector3(0.4,0.4,1);
 				break;
 			case Depth.Middle:
-				transform.localScale = Vector3(0.8,0.8,1);
+				transform.localScale = Vector3(0.7,0.7,1);
 				break;
 			case Depth.Top:
 				transform.localScale = Vector3(1,1,1);

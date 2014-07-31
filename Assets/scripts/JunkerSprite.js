@@ -38,10 +38,10 @@ function SetSprite (state: State, depth: Depth) {
 		switch(depth){
 		
 			case Depth.Bottom:
-				scale = new Vector3(0.6,0.6,1);
+				scale = new Vector3(0.4,0.4,1);
 				break;
 			case Depth.Middle:
-				scale = new Vector3(0.8,0.8,1);
+				scale = new Vector3(0.7,0.7,1);
 				break;
 			case Depth.Top:
 				scale = new Vector3(1,1,1);
