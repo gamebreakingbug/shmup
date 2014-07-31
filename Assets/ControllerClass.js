@@ -30,6 +30,7 @@ public class ControllerClass extends Moveables {
     private var stateHashtable : Hashtable = new Hashtable();
   	private var bounce : boolean;
     private var rolling : boolean;
+    private var transitioning : boolean;
 
   	var state : State;
     var depth : Depth;
@@ -40,15 +41,15 @@ public class ControllerClass extends Moveables {
     function Start(){
 
       var topHashtable : Hashtable = new Hashtable();
-      var tDvArray = [tDv1, tDv2];
+      var tDvArray = [tDv1, tDv2, mCr];
       topHashtable[State.Cruising] = tCr;
       topHashtable[State.BankingL] = tBl;
       topHashtable[State.BankingR] = tBr;
       topHashtable[State.Diving] = tDvArray;
 
       var middleHashtable : Hashtable = new Hashtable();
-      var mClArray = [mCl1, mCl2];
-      var mDvArray = [mDv1, mDv2];
+      var mClArray = [mCl1, mCl2, tCr];
+      var mDvArray = [mDv1, mDv2, bCr];
       middleHashtable[State.Cruising] = mCr;
       middleHashtable[State.BankingL] = mBl;
       middleHashtable[State.BankingR] = mBr;
@@ -56,7 +57,7 @@ public class ControllerClass extends Moveables {
       middleHashtable[State.Diving] = mDvArray;
 
       var bottomHashtable : Hashtable = new Hashtable();
-      var bClArray = [bCl1, bCl2];
+      var bClArray = [bCl1, bCl2, mCr];
       bottomHashtable[State.Cruising] = bCr;
       bottomHashtable[State.BankingL] = bBl;
       bottomHashtable[State.BankingR] = bBr;
@@ -66,7 +67,7 @@ public class ControllerClass extends Moveables {
       stateHashtable[Depth.Middle] = middleHashtable;
       stateHashtable[Depth.Bottom] = bottomHashtable;
 
-      depth = Depth.Middle;
+      depth = Depth.Bottom;
     }
 
 
@@ -78,11 +79,11 @@ public class ControllerClass extends Moveables {
 
     		if(!bounce){
 
-          if(!rolling && depth != depth.Top && Input.GetButtonDown("LeftBumper")){
+          if(!rolling && depth != depth.Top && Input.GetButtonDown("LeftBumper") && state != State.Climbing){
             state = State.Climbing;
             //BarrelRoll("LeftBumper");
           }
-          else if(!rolling && depth != depth.Bottom &&  Input.GetButtonDown("RightBumper")){
+          else if(!rolling && depth != depth.Bottom &&  Input.GetButtonDown("RightBumper") && state != State.Diving){
             state = State.Diving;
             //BarrelRoll("RightBumper");
           }
@@ -164,22 +165,54 @@ public class ControllerClass extends Moveables {
 
   	}
 
-    function TransitionAnim(array : Array){
+    function ChangeDepth(array : Array){
 
-        for(var i = 0; i<array.length; i++){
-          var currentSpr : Sprite = array[i];
-          var renderer : SpriteRenderer = gameObject.GetComponent(SpriteRenderer);
+        var cameraSize : float = Camera.main.orthographicSize;
+        var renderer : SpriteRenderer = gameObject.GetComponent(SpriteRenderer);
+        var currentSpr : Sprite;
+        var loop : int = array.length - 1;
+
+        for(var i = 0; i<loop; i++){
+          currentSpr = array[i];
           renderer.sprite = currentSpr;
-          yield WaitForSeconds(0.1);
+          yield WaitForSeconds(0.12);
         }
 
+        currentSpr = array[loop];
+        renderer.sprite = currentSpr;
+
+        var sizeMod : float;
+
         if(state == State.Climbing){
+          if(depth == Depth.Bottom){
+
+            sizeMod =  ( 52 / cameraSize ) / 100; // + 52px
+            transform.position.y += cameraSize * sizeMod;
+          }
+          else if(depth == Depth.Middle){
+
+            sizeMod =  ( 36 / cameraSize ) / 100; // + 36 px
+            transform.position.y += cameraSize * sizeMod;
+          }
           depth += 1;
         }
         else if(state == State.Diving){
+          if(depth == Depth.Top){
+
+            sizeMod =  ( 52 / cameraSize ) / 100; // + 52px
+            transform.position.y += cameraSize * sizeMod; // +
+          }
+          else if(depth == Depth.Middle){
+
+            sizeMod =  ( 68 / cameraSize ) / 100; // + 68px
+            transform.position.y += cameraSize * sizeMod;
+          }
           depth -= 1;
         }
+
+        transitioning = false;
         state = State.Cruising;
+
     }
 
   	function SpriteRend(){
@@ -187,32 +220,36 @@ public class ControllerClass extends Moveables {
         var currentSpr : Sprite;
         var currentHashtable : Hashtable = stateHashtable[depth];
 
-        if(state == State.Climbing || state == State.Diving){
+        if(!transitioning){
 
-          TransitionAnim(currentHashtable[state]);
+            if(state == State.Climbing || state == State.Diving){
 
-        }
+              transitioning = true;
+              ChangeDepth(currentHashtable[state]);
 
-        else{
-
-          currentSpr = currentHashtable[state];
-      		var renderer : SpriteRenderer = gameObject.GetComponent(SpriteRenderer);
-
-
-            if(velocity.x < 0.4 && velocity.x > -0.4){
-              state = State.Cruising;
             }
-            else if (bank >= 0.4){
-      				state = State.BankingR;
-      				}
-      			else if (bank <= -0.4){
-      				state = State.BankingL;
-      				}
-      			else{
-      				state = State.Cruising;
-      			}
-      		renderer.sprite = currentSpr;
 
+            else{
+
+              currentSpr = currentHashtable[state];
+          		var renderer : SpriteRenderer = gameObject.GetComponent(SpriteRenderer);
+
+
+                if(velocity.x < 0.4 && velocity.x > -0.4){
+                  state = State.Cruising;
+                }
+                else if (bank >= 0.4){
+          				state = State.BankingR;
+          				}
+          			else if (bank <= -0.4){
+          				state = State.BankingL;
+          				}
+          			else{
+          				state = State.Cruising;
+          			}
+          		renderer.sprite = currentSpr;
+
+            }
         }
   	}
 
