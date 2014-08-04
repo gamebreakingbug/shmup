@@ -11,6 +11,11 @@ public class ControllerClass extends Moveables {
   	private var bounce : boolean;
     private var transitioning : boolean;
 
+
+    var leftDash : AudioClip;
+    var rightDash : AudioClip;
+    private var shipAudio : AudioSource;
+
   	var state : State;
     var depth : Depth;
 
@@ -111,7 +116,7 @@ public class ControllerClass extends Moveables {
         var renderer : SpriteRenderer = gameObject.GetComponent(SpriteRenderer);
         var currentSpr : Sprite;
         var sizeMod : float; // used for climbing / diving
-        var rollSpeed : float = 30;
+        var rollSpeed : float = 24;
         var boostSpeed : float = 20;
         var loop : int = array.length - 1;
         var newPos : Vector2;
@@ -120,13 +125,13 @@ public class ControllerClass extends Moveables {
 
 
         if(state == State.RollingR){
-
+            shipAudio.PlayOneShot(rightDash);
             newPos =  Vector2(((speed * rollSpeed)/cameraSize)/100,0);
             transform.position.x += cameraSize * (newPos.x * depthMod);
             SetVelocity(speed,0);
             }
         else if(state == State.RollingL){
-
+            shipAudio.PlayOneShot(leftDash);
             newPos =  Vector2(((speed * rollSpeed)/cameraSize)/100,0);
             transform.position.x += cameraSize * (-newPos.x * depthMod);
             SetVelocity(-speed,0);
@@ -140,7 +145,7 @@ public class ControllerClass extends Moveables {
         for(var i = 0; i<loop; i++){
           currentSpr = array[i];
           renderer.sprite = currentSpr;
-          yield WaitForSeconds(0.12);
+          yield WaitForSeconds(0.08);
         }
 
         currentSpr = array[loop];
@@ -218,9 +223,9 @@ public class ControllerClass extends Moveables {
 
       var topHashtable : Hashtable = new Hashtable();
       var tDVarray = [Spr[3],Spr[13],Spr[1]];
-      var tRLarray = [Spr[24],Spr[28],Spr[4]];
-      var tRRarray = [Spr[32],Spr[16],Spr[20]];  //  var tRRarray = [Spr[16],Spr[20],Spr[8]];
-      var tBSarray = [Spr[23],Spr[12],Spr[0]];
+      var tRLarray = [Spr[28],Spr[32],Spr[36],Spr[0]];
+      var tRRarray = [Spr[16],Spr[20],Spr[24],Spr[0]];  //  var tRRarray = [Spr[16],Spr[20],Spr[8]];
+      var tBSarray = [Spr[23],Spr[35],Spr[12],Spr[0]];
 
       topHashtable[State.Cruising] = Spr[0];
       topHashtable[State.BankingL] = Spr[4];
@@ -233,9 +238,9 @@ public class ControllerClass extends Moveables {
       var middleHashtable : Hashtable = new Hashtable();
       var mDVarray = [Spr[11],Spr[14],Spr[2]];
       var mCMarray = [Spr[7],Spr[12],Spr[0]];
-      var mRLarray = [Spr[25],Spr[29],Spr[5]];
-      var mRRarray = [Spr[17],Spr[21],Spr[9]];
-      var mBSarray = [Spr[27],Spr[13],Spr[1]];
+      var mRLarray = [Spr[29],Spr[33],Spr[37],Spr[1]];
+      var mRRarray = [Spr[17],Spr[21],Spr[25],Spr[1]];
+      var mBSarray = [Spr[27],Spr[39],Spr[13],Spr[1]];
 
       middleHashtable[State.Cruising] = Spr[1];
       middleHashtable[State.BankingL] = Spr[5];
@@ -248,9 +253,9 @@ public class ControllerClass extends Moveables {
 
       var bottomHashtable : Hashtable = new Hashtable();
       var bCMarray = [Spr[15],Spr[19],Spr[1]];
-      var bRLarray = [Spr[26],Spr[30],Spr[6]];
-      var bRRarray = [Spr[18],Spr[22],Spr[10]];
-      var bBSarray = [Spr[31],Spr[14],Spr[2]];
+      var bRLarray = [Spr[30],Spr[34],Spr[38],Spr[2]];
+      var bRRarray = [Spr[18],Spr[22],Spr[26],Spr[2]];
+      var bBSarray = [Spr[31],Spr[40],Spr[14],Spr[2]];
 
       bottomHashtable[State.Cruising] = Spr[2];
       bottomHashtable[State.BankingL] = Spr[6];
@@ -265,6 +270,7 @@ public class ControllerClass extends Moveables {
       stateHashtable[Depth.Bottom] = bottomHashtable;
 
       depth = Depth.Middle;
+      shipAudio = gameObject.GetComponent("AudioSource");
 
     }
 
