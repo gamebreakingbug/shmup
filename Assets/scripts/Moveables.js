@@ -16,19 +16,13 @@ public class Moveables extends MonoBehaviour {
 
   function SetMove(bank:float, thrust:float){
 
-        if (thrust== 0){
-          SetVelocity(velocity.x , velocity.y * 0.95f);
+        if (thrust == 0 && bank == 0){
+          SetVelocity(velocity.x * 0.95f, velocity.y * 0.95f);
         }
-        else if (thrust >= 0.4f || thrust <= -0.4f){
-          SetVelocity(velocity.x , speed * thrust);
+        else {
+          SetVelocity(speed * bank, speed * thrust);
         }
 
-        if (bank >= 0.4f || bank <= -0.4f){
-          SetVelocity(speed * bank, velocity.y);
-        }
-        else if (bank == 0){
-          SetVelocity(velocity.x * 0.95f, velocity.y);
-        }
 
   }
 
